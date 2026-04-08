@@ -1,4 +1,4 @@
-Name,Team Id,Team Name
+Name,TeamId,TeamName
 Norris,1,McLaren
 Piastri,1,McLaren
 Antonelli,2,Mercedes
@@ -17,9 +17,9 @@ Bearman,8,Haas
 Ocon,8,Haas
 Colapinto,10,Alpine
 Gasly,10,Alpine
-Bortoleto,11,Audi
+Bortoleto,9,Audi
 Bottas,11,Cadillac F1 Team
-Hülkenberg,11,Audi
+Hülkenberg,9,Audi
 Pérez,11,Cadillac F1 Team
 Barrichello,12,one step away
 Button,12,one step away
