@@ -1,0 +1,479 @@
+Source,Target,Weighting
+Albon,Sainz,1
+Alonso,Stroll,1
+Antonelli,Russell,1
+Bearman,Ocon,1
+Bortoleto,Hülkenberg,1
+Bottas,Pérez,1
+Colapinto,Gasly,1
+Hadjar,Verstappen (Max),1
+Hamilton,Leclerc,1
+Lawson,Lindblad,1
+Norris,Piastri,1
+Albon,Colapinto,2
+Albon,Verstappen (Max),2
+Alonso,Hamilton,2
+Alonso,Ocon,2
+Bearman,Hülkenberg,2
+Bearman,Leclerc,2
+Bottas,Hamilton,2
+Bottas,Russell,2
+Gasly,Ocon,2
+Gasly,Sainz,2
+Gasly,Verstappen (Max),2
+Hadjar,Lawson,2
+Hamilton,Russell,2
+Hülkenberg,Pérez,2
+Hülkenberg,Sainz,2
+Hülkenberg,Stroll,2
+Lawson,Verstappen (Max),2
+Leclerc,Sainz,2
+Norris,Sainz,2
+Ocon,Pérez,2
+Pérez,Stroll,2
+Pérez,Verstappen (Max),2
+Sainz,Verstappen (Max),2
+Albon,Kvyat,3
+Albon,Latifi,3
+Albon,Sargeant,3
+Alonso,Button,3
+Alonso,Fisichella,3
+Alonso,Grosjean,3
+Alonso,Marques,3
+Alonso,Massa,3
+Alonso,Piquet Jr.,3
+Alonso,Räikkönen,3
+Alonso,Trulli,3
+Alonso,Vandoorne,3
+Alonso,Villeneuve,3
+Alonso,Yoong,3
+Barrichello,Hülkenberg,3
+Bottas,Maldonado,3
+Bottas,Massa,3
+Bottas,Zhou,3
+Button,Hamilton,3
+Button,Pérez,3
+Doohan,Gasly,3
+Ericsson,Leclerc,3
+Gasly,Hartley,3
+Gasly,Kvyat,3
+Gasly,Tsunoda,3
+Gutiérrez,Hülkenberg,3
+Hadjar,Tsunoda,3
+Hamilton,Kovalainen,3
+Hamilton,Rosberg (Nico),3
+Hülkenberg,Magnussen (Kevin),3
+Hülkenberg,Palmer (Jolyon),3
+Hülkenberg,Ricciardo,3
+Hülkenberg,di Resta,3
+Kobayashi,Pérez,3
+Kubica,Russell,3
+Kvyat,Sainz,3
+Latifi,Russell,3
+Lawson,Tsunoda,3
+Leclerc,Vettel,3
+Massa,Stroll,3
+Norris,Ricciardo,3
+Ocon,Ricciardo,3
+Ocon,Wehrlein,3
+Ricciardo,Verstappen (Max),3
+Sirotkin,Stroll,3
+Stroll,Vettel,3
+Stroll,di Resta,3
+Tsunoda,Verstappen (Max),3
+Aitken,Latifi,4
+Alesi,Trulli,4
+Apicella,Barrichello,4
+Badoer,Räikkönen,4
+Barrichello,Boutsen,4
+Barrichello,Brundle,4
+Barrichello,Button,4
+Barrichello,Capelli,4
+Barrichello,Herbert,4
+Barrichello,Irvine,4
+Barrichello,Magnussen (Jan),4
+Barrichello,Maldonado,4
+Barrichello,Naspetti,4
+Barrichello,Schumacher (Michael),4
+Barrichello,Suzuki (Aguri),4
+Barrichello,Verstappen (Jos),4
+Barrichello,de Cesaris,4
+Baumgartner,Fisichella,4
+Bourdais,Vettel,4
+Button,Davidson,4
+Button,Fisichella,4
+Button,Magnussen (Kevin),4
+Button,Sato,4
+Button,Schumacher (Ralf),4
+Button,Trulli,4
+Button,Vandoorne,4
+Button,Villeneuve,4
+Chandhok,Kovalainen,4
+Coulthard,Räikkönen,4
+Ericsson,Giovinazzi,4
+Ericsson,Kobayashi,4
+Ericsson,Lotterer,4
+Ericsson,Nasr,4
+Ericsson,Wehrlein,4
+Firman,Fisichella,4
+Fisichella,Kovalainen,4
+Fisichella,Lamy,4
+Fisichella,Massa,4
+Fisichella,Räikkönen,4
+Fisichella,Sato,4
+Fisichella,Schumacher (Ralf),4
+Fisichella,Sutil,4
+Fisichella,Wurz,4
+Fittipaldi (Pietro),Magnussen (Kevin),4
+Frentzen,Trulli,4
+Frentzen,Villeneuve,4
+Giovinazzi,Kubica,4
+Giovinazzi,Räikkönen,4
+Glock,Trulli,4
+Grosjean,Gutiérrez,4
+Grosjean,Kovalainen,4
+Grosjean,Magnussen (Kevin),4
+Grosjean,Maldonado,4
+Grosjean,Räikkönen,4
+Gutiérrez,Sutil,4
+Hartley,Kvyat,4
+Haryanto,Wehrlein,4
+Heidfeld,Kobayashi,4
+Heidfeld,Kubica,4
+Heidfeld,Massa,4
+Heidfeld,Räikkönen,4
+Heidfeld,Vettel,4
+Heidfeld,Villeneuve,4
+Hill,Villeneuve,4
+Karthikeyan,Ricciardo,4
+Katayama,Marques,4
+Katayama,Trulli,4
+Kobayashi,Stevens,4
+Kobayashi,Trulli,4
+Kobayashi,de la Rosa,4
+Kovalainen,Petrov,4
+Kovalainen,Trulli,4
+Kubica,Petrov,4
+Kvyat,Ricciardo,4
+Kvyat,Vergne,4
+Lamy,Marques,4
+Latifi,de Vries,4
+Liuzzi,Ricciardo,4
+Liuzzi,Vettel,4
+Magnussen (Kevin),Palmer (Jolyon),4
+Magnussen (Kevin),Schumacher (Mick),4
+Maldonado,Senna (Bruno),4
+Massa,Räikkönen,4
+Massa,Schumacher (Michael),4
+Massa,Villeneuve,4
+Nakajima (Kazuki),Rosberg (Nico),4
+Nakano,Trulli,4
+Pablo Montoya,Räikkönen,4
+Panis,Trulli,4
+Panis,Villeneuve,4
+Ricciardo,Tsunoda,4
+Ricciardo,Vergne,4
+Ricciardo,Vettel,4
+Rosberg (Nico),Schumacher (Michael),4
+Rosberg (Nico),Webber,4
+Rosberg (Nico),Wurz,4
+Räikkönen,Vettel,4
+Räikkönen,Wurz,4
+Räikkönen,d'Ambrosio,4
+Räikkönen,de la Rosa,4
+Salo,Villeneuve,4
+Schumacher (Ralf),Trulli,4
+Sutil,di Resta,4
+Trulli,Zonta,4
+Tsunoda,de Vries,4
+Vettel,Webber,4
+Villeneuve,Zonta,4
+Webber,Yoong,4
+Adams,Herbert,5
+Albers,Sutil,5
+Alboreto,Badoer,5
+Alboreto,Suzuki (Aguri),5
+Alesi,Berger,5
+Alesi,Burti,5
+Alesi,Capelli,5
+Alesi,Diniz,5
+Alesi,Heidfeld,5
+Alesi,Herbert,5
+Alesi,Larini,5
+Alesi,Mazzacane,5
+Alesi,Morbidelli,5
+Alesi,Nakajima (Satoru),5
+Alesi,Palmer (Jonathan),5
+Alesi,Prost,5
+Alesi,Wurz,5
+Alliot,Brundle,5
+Alliot,Suzuki (Aguri),5
+Badoer,Gené,5
+Badoer,Lamy,5
+Badoer,Martini,5
+Badoer,Montermini,5
+Baumgartner,Bruni,5
+Bellof,Brundle,5
+Berger,Boutsen,5
+Bernard,Panis,5
+Bernard,Suzuki (Aguri),5
+Bernoldi,Frentzen,5
+Bernoldi,Verstappen (Jos),5
+Blundell,Brundle,5
+Blundell,Katayama,5
+Blundell,Magnussen (Jan),5
+Boullion,Frentzen,5
+Bourdais,Buemi,5
+Boutsen,Comas,5
+Boutsen,Danner,5
+Boutsen,Fabi,5
+Boutsen,Nannini,5
+Boutsen,Patrese,5
+Boutsen,Surer,5
+Brundle,Capelli,5
+Brundle,Danner,5
+Brundle,Häkkinen,5
+Brundle,Johansson,5
+Brundle,Modena,5
+Brundle,Panis,5
+Brundle,Patrese,5
+Brundle,Schumacher (Michael),5
+Brundle,Streiff,5
+Burti,Frentzen,5
+Burti,Herbert,5
+Burti,Irvine,5
+Caffi,de Cesaris,5
+Capelli,Gugelmin,5
+Chandhok,Senna (Bruno),5
+Chandhok,Yamamoto,5
+Coulthard,Doornbos,5
+Coulthard,Hill,5
+Coulthard,Häkkinen,5
+Coulthard,Klien,5
+Coulthard,Liuzzi,5
+Coulthard,Webber,5
+Davidson,Sato,5
+Davidson,Webber,5
+Diniz,Hill,5
+Diniz,Panis,5
+Diniz,Salo,5
+Enge,Frentzen,5
+Fontana,Herbert,5
+Frentzen,Heidfeld,5
+Frentzen,Herbert,5
+Frentzen,Hill,5
+Frentzen,Järvilehto,5
+Frentzen,Wendlinger,5
+Frentzen,de Cesaris,5
+Gachot,Katayama,5
+Gachot,de Cesaris,5
+Gené,Pablo Montoya,5
+Glock,Heidfeld,5
+Glock,Pic,5
+Glock,d'Ambrosio,5
+Glock,di Grassi,5
+Grouillard,de Cesaris,5
+Heidfeld,Pantano,5
+Heidfeld,Petrov,5
+Heidfeld,Webber,5
+Herbert,Häkkinen,5
+Herbert,Irvine,5
+Herbert,Lamy,5
+Herbert,Larini,5
+Herbert,Morbidelli,5
+Herbert,Nannini,5
+Herbert,Palmer (Jonathan),5
+Herbert,Panis,5
+Herbert,Schumacher (Michael),5
+Herbert,Warwick,5
+Herbert,Zanardi,5
+Hill,Mansell,5
+Hill,Prost,5
+Hill,Schumacher (Ralf),5
+Hill,Senna (Ayrton),5
+Hill,van de Poele,5
+Ide,Sato,5
+Irvine,Salo,5
+Irvine,Schumacher (Michael),5
+Irvine,de la Rosa,5
+Järvilehto,Schumacher (Michael),5
+Järvilehto,Verstappen (Jos),5
+Karthikeyan,Liuzzi,5
+Karthikeyan,Monteiro,5
+Karthikeyan,de la Rosa,5
+Katayama,Salo,5
+Katayama,de Cesaris,5
+Kiesa,Verstappen (Jos),5
+Klien,Senna (Bruno),5
+Klien,Webber,5
+Laffite,de Cesaris,5
+Lagorce,Panis,5
+Lammers,Naspetti,5
+Lamy,Lavaggi,5
+Liuzzi,Speed,5
+Liuzzi,Sutil,5
+Mazepin,Schumacher (Mick),5
+McNish,Salo,5
+Merhi,Stevens,5
+Modena,de Cesaris,5
+Montagny,Sato,5
+Morbidelli,de Cesaris,5
+Moreno,de Cesaris,5
+Nakano,Panis,5
+Nakano,Tuero,5
+Nannini,de Cesaris,5
+Naspetti,Wendlinger,5
+Pablo Montoya,Pizzonia,5
+Pablo Montoya,Schumacher (Ralf),5
+Panis,Suzuki (Aguri),5
+Panis,Zonta,5
+Panis,da Matta,5
+Patrese,Schumacher (Michael),5
+Patrese,de Cesaris,5
+Petrov,Senna (Bruno),5
+Piquet,Schumacher (Michael),5
+Pirro,de Cesaris,5
+Pizzonia,Webber,5
+Rosset,Verstappen (Jos),5
+Rossi,Stevens,5
+Salo,Tarquini,5
+Salo,Verstappen (Jos),5
+Salo,Zanardi,5
+Sato,Yamamoto,5
+Schiattarella,Verstappen (Jos),5
+Schumacher (Michael),Verstappen (Jos),5
+Schumacher (Michael),de Cesaris,5
+Schumacher (Ralf),Zanardi,5
+Senna (Bruno),Yamamoto,5
+Sutil,Winkelhock (Markus),5
+Sutil,Yamamoto,5
+Suzuki (Aguri),Warwick,5
+Takagi,de la Rosa,5
+Verstappen (Jos),Wilson,5
+Verstappen (Jos),de la Rosa,5
+Webber,Wilson,5
+Zanardi,de Cesaris,5
+Acheson,Alliot,6
+Albers,Doornbos,6
+Albers,Friesacher,6
+Albers,Monteiro,6
+Alboreto,Alliot,6
+Alboreto,Arnoux,6
+Alboreto,Berger,6
+Alboreto,Caffi,6
+Alboreto,Johansson,6
+Alboreto,Martini,6
+Alboreto,Palmer (Jonathan),6
+Alboreto,Schneider,6
+Alguersuari,Buemi,6
+Alliot,Arnoux,6
+Alliot,Bernard,6
+Alliot,Comas,6
+Alliot,Dalmas,6
+Alliot,Larini,6
+Alliot,Winkelhock (Manfred),6
+Andretti,Senna (Ayrton),6
+Arnoux,Grouillard,6
+Arnoux,Johansson,6
+Arnoux,Laffite,6
+Bailey,Häkkinen,6
+Bailey,Palmer (Jonathan),6
+Barilla,Martini,6
+Belmondo,Gachot,6
+Belmondo,Wendlinger,6
+Beretta,Comas,6
+Berger,Fabi,6
+Berger,Larini,6
+Berger,Mansell,6
+Berger,Senna (Ayrton),6
+Bernard,Zanardi,6
+Blundell,Häkkinen,6
+Brabham,Modena,6
+Brabham,Montermini,6
+Brabham,Schiattarella,6
+Caffi,Forini,6
+Caffi,Ghinzani,6
+Caffi,Tarquini,6
+Campos,Nannini,6
+Cheever,Patrese,6
+Cheever,Warwick,6
+Chiesa,Tarquini,6
+Comas,Dalmas,6
+Comas,Noda,6
+Comas,Suzuki (Toshio),6
+Dalmas,Tarquini,6
+Danner,Ghinzani,6
+Diniz,Moreno,6
+Donnelly,Warwick,6
+Dumfries,Senna (Ayrton),6
+Délétraz,Montermini,6
+Fabi,Ghinzani,6
+Fittipaldi (Christian),Martini,6
+Fittipaldi (Christian),Morbidelli,6
+Foitek,Järvilehto,6
+Foitek,Modena,6
+Gachot,Johansson,6
+Gachot,Montermini,6
+Gené,Mazzacane,6
+Gené,Sarrazin,6
+Ghinzani,Larini,6
+Gounon,Martini,6
+Gugelmin,Modena,6
+Gugelmin,Wendlinger,6
+Hesnault,Piquet,6
+Häkkinen,Mansell,6
+Häkkinen,Senna (Ayrton),6
+Inoue,Morbidelli,6
+Johansson,Prost,6
+Järvilehto,Martini,6
+Järvilehto,Pirro,6
+Järvilehto,Wendlinger,6
+Laffite,Streiff,6
+Larrauri,Modena,6
+Lauda,Prost,6
+Lavaggi,Montermini,6
+Mansell,Patrese,6
+Mansell,Piquet,6
+Mansell,Prost,6
+Mansell,Rosberg (Keke),6
+Martini,Morbidelli,6
+Martini,Moreno,6
+Martini,Pérez-Sala,6
+Modena,Nakajima (Satoru),6
+Morbidelli,Zanardi,6
+Moreno,Piquet,6
+Moreno,Raphanel,6
+Nakajima (Satoru),Piquet,6
+Nakajima (Satoru),Senna (Ayrton),6
+Nannini,Piquet,6
+Nannini,Pirro,6
+Palmer (Jonathan),Rothengatter,6
+Palmer (Jonathan),Streiff,6
+Patrese,Piquet,6
+Patrese,Schlesser,6
+Patrese,Warwick,6
+Patrese,de Angelis,6
+Pic,van der Garde,6
+Piquet,Surer,6
+Prost,Rosberg (Keke),6
+Prost,Senna (Ayrton),6
+Prost,Watson,6
+Rosset,Takagi,6
+Senna (Ayrton),de Angelis,6
+Tambay,Warwick,6
+Tarquini,van de Poele,6
+Arnoux,Ghinzani,7
+Barbazza,Fittipaldi (Christian),7
+Barilla,Pérez-Sala,7
+Berg,Ghinzani,7
+Brabham,Gounon,7
+Brabham,Inoue,7
+Brabham,Ratzenberger,7
+Campos,Pérez-Sala,7
+Cheever,Donnelly,7
+Cheever,Jones,7
+Délétraz,Noda,7
+Ghinzani,Schneider,7
+Inoue,Papis,7
+Jones,Tambay,7
+Bianchi,Chilton,999

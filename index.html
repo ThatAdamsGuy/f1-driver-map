@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Driver Teammate Network</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://unpkg.com/cytoscape@3.30.2/dist/cytoscape.min.js"></script>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <h1>Driver Teammate Network</h1>
+      <p class="subtle">
+        Interactive graph for current drivers, former teammates, and indirect links.
+      </p>
+
+      <div class="panel">
+        <label for="colorBy">Colour by</label>
+        <select id="colorBy">
+          <option value="Team" selected>Team</option>
+        </select>
+      </div>
+
+      <div class="panel">
+        <label>
+          <input type="checkbox" id="showLabels" checked />
+          Show labels
+        </label>
+      </div>
+
+      <div class="panel">
+        <button id="fitButton" type="button">Fit graph</button>
+        <button id="rerunLayoutButton" type="button">Re-run layout</button>
+      </div>
+
+      <div class="panel">
+        <h2>Legend</h2>
+        <div id="legend"></div>
+      </div>
+
+      <div class="panel">
+        <h2>Selected</h2>
+        <div id="selectionInfo" class="selection-info">Click a node or link.</div>
+      </div>
+
+      <div class="panel small-text">
+        <h2>CSV format</h2>
+        <p><strong>Nodes:</strong> <code>Name,Team</code></p>
+        <p><strong>Links:</strong> <code>Source,Target,Weighting</code></p>
+      </div>
+    </aside>
+
+    <main class="graph-area">
+      <div id="cy"></div>
+    </main>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
