@@ -1,237 +1,237 @@
-Name,Team
-Norris,1
-Piastri,1
-Antonelli,2
-Russell,2
-Hadjar,3
-Verstappen (Max),3
-Hamilton,4
-Leclerc,4
-Albon,5
-Sainz,5
-Lawson,6
-Lindblad,6
-Alonso,7
-Stroll,7
-Bearman,8
-Ocon,8
-Colapinto,10
-Gasly,10
-Bortoleto,11
-Bottas,11
-Hülkenberg,11
-Pérez,11
-Barrichello,12
-Button,12
-Doohan,12
-Ericsson,12
-Fisichella,12
-Grosjean,12
-Gutiérrez,12
-Hartley,12
-Kobayashi,12
-Kovalainen,12
-Kubica,12
-Kvyat,12
-Latifi,12
-Magnussen (Kevin),12
-Maldonado,12
-Marques,12
-Massa,12
-Palmer (Jolyon),12
-Piquet Jr.,12
-Ricciardo,12
-Rosberg (Nico),12
-Räikkönen,12
-Sargeant,12
-Sirotkin,12
-Trulli,12
-Tsunoda,12
-Vandoorne,12
-Vettel,12
-Villeneuve,12
-Wehrlein,12
-Yoong,12
-Zhou,12
-di Resta,12
-Acheson,13
-Adams,13
-Aitken,13
-Albers,13
-Alboreto,13
-Alesi,13
-Alguersuari,13
-Alliot,13
-Andretti,13
-Apicella,13
-Arnoux,13
-Badoer,13
-Bailey,13
-Baldi,13
-Barbazza,13
-Barilla,13
-Baumgartner,13
-Bellof,13
-Belmondo,13
-Beretta,13
-Berg,13
-Berger,13
-Bernard,13
-Bernoldi,13
-Bianchi,13
-Blundell,13
-Boullion,13
-Bourdais,13
-Boutsen,13
-Brabham,13
-Brundle,13
-Bruni,13
-Buemi,13
-Burti,13
-Caffi,13
-Campos,13
-Capelli,13
-Chandhok,13
-Cheever,13
-Chiesa,13
-Chilton,13
-Comas,13
-Coulthard,13
-Dalmas,13
-Danner,13
-Davidson,13
-Diniz,13
-Donnelly,13
-Doornbos,13
-Dumfries,13
-Délétraz,13
-Enge,13
-Fabi,13
-Fabre,13
-Firman,13
-Fittipaldi (Christian),13
-Fittipaldi (Pietro),13
-Foitek,13
-Fontana,13
-Forini,13
-Frentzen,13
-Friesacher,13
-Gachot,13
-Gené,13
-Ghinzani,13
-Giovinazzi,13
-Glock,13
-Gounon,13
-Grouillard,13
-Gugelmin,13
-Haryanto,13
-Heidfeld,13
-Herbert,13
-Hesnault,13
-Hill,13
-Häkkinen,13
-Ide,13
-Inoue,13
-Irvine,13
-Johansson,13
-Jones,13
-Järvilehto,13
-Karthikeyan,13
-Katayama,13
-Kiesa,13
-Klien,13
-Laffite,13
-Lagorce,13
-Lammers,13
-Lamy,13
-Larini,13
-Larrauri,13
-Lauda,13
-Lavaggi,13
-Liuzzi,13
-Lotterer,13
-Magnussen (Jan),13
-Mansell,13
-Martini,13
-Mazepin,13
-Mazzacane,13
-McCarthy,13
-McNish,13
-Merhi,13
-Modena,13
-Montagny,13
-Monteiro,13
-Montermini,13
-Morbidelli,13
-Moreno,13
-Nakajima (Kazuki),13
-Nakajima (Satoru),13
-Nakano,13
-Nannini,13
-Naspetti,13
-Nasr,13
-Noda,13
-Pablo Montoya,13
-Palmer (Jonathan),13
-Panis,13
-Pantano,13
-Papis,13
-Patrese,13
-Petrov,13
-Pic,13
-Piquet,13
-Pirro,13
-Pizzonia,13
-Prost,13
-Pérez-Sala,13
-Raphanel,13
-Ratzenberger,13
-Rosberg (Keke),13
-Rosset,13
-Rossi,13
-Rothengatter,13
-Salo,13
-Sarrazin,13
-Sato,13
-Schiattarella,13
-Schlesser,13
-Schneider,13
-Schumacher (Michael),13
-Schumacher (Mick),13
-Schumacher (Ralf),13
-Senna (Ayrton),13
-Senna (Bruno),13
-Speed,13
-Stevens,13
-Streiff,13
-Surer,13
-Sutil,13
-Suzuki (Aguri),13
-Suzuki (Toshio),13
-Takagi,13
-Tambay,13
-Tarquini,13
-Tuero,13
-Vergne,13
-Verstappen (Jos),13
-Warwick,13
-Watson,13
-Webber,13
-Weidler,13
-Wendlinger,13
-Wilson,13
-Winkelhock (Manfred),13
-Winkelhock (Markus),13
-Wurz,13
-Yamamoto,13
-Zanardi,13
-Zonta,13
-d'Ambrosio,13
-da Matta,13
-de Angelis,13
-de Cesaris,13
-de Vries,13
-de la Rosa,13
-di Grassi,13
-van de Poele,13
-van der Garde,13
+Name,Team Id,Team Name
+Norris,1,McLaren
+Piastri,1,McLaren
+Antonelli,2,Mercedes
+Russell,2,Mercedes
+Hadjar,3,Red Bull
+Verstappen (Max),3,Red Bull
+Hamilton,4,Ferrari
+Leclerc,4,Ferrari
+Albon,5,Williams
+Sainz,5,Williams
+Lawson,6,RB
+Lindblad,6,RB
+Alonso,7,Aston Martin
+Stroll,7,Aston Martin
+Bearman,8,Haas
+Ocon,8,Haas
+Colapinto,10,Alpine
+Gasly,10,Alpine
+Bortoleto,11,Audi
+Bottas,11,Cadillac F1 Team
+Hülkenberg,11,Audi
+Pérez,11,Cadillac F1 Team
+Barrichello,12,one step away
+Button,12,one step away
+Doohan,12,one step away
+Ericsson,12,one step away
+Fisichella,12,one step away
+Grosjean,12,one step away
+Gutiérrez,12,one step away
+Hartley,12,one step away
+Kobayashi,12,one step away
+Kovalainen,12,one step away
+Kubica,12,one step away
+Kvyat,12,one step away
+Latifi,12,one step away
+Magnussen (Kevin),12,one step away
+Maldonado,12,one step away
+Marques,12,one step away
+Massa,12,one step away
+Palmer (Jolyon),12,one step away
+Piquet Jr.,12,one step away
+Ricciardo,12,one step away
+Rosberg (Nico),12,one step away
+Räikkönen,12,one step away
+Sargeant,12,one step away
+Sirotkin,12,one step away
+Trulli,12,one step away
+Tsunoda,12,one step away
+Vandoorne,12,one step away
+Vettel,12,one step away
+Villeneuve,12,one step away
+Wehrlein,12,one step away
+Yoong,12,one step away
+Zhou,12,one step away
+di Resta,12,one step away
+Aitken,13,two steps away
+Alesi,13,two steps away
+Apicella,13,two steps away
+Badoer,13,two steps away
+Baumgartner,13,two steps away
+Bourdais,13,two steps away
+Boutsen,13,two steps away
+Brundle,13,two steps away
+Capelli,13,two steps away
+Chandhok,13,two steps away
+Coulthard,13,two steps away
+Davidson,13,two steps away
+Firman,13,two steps away
+Fittipaldi (Pietro),13,two steps away
+Frentzen,13,two steps away
+Giovinazzi,13,two steps away
+Glock,13,two steps away
+Haryanto,13,two steps away
+Heidfeld,13,two steps away
+Herbert,13,two steps away
+Hill,13,two steps away
+Irvine,13,two steps away
+Karthikeyan,13,two steps away
+Katayama,13,two steps away
+Lamy,13,two steps away
+Liuzzi,13,two steps away
+Lotterer,13,two steps away
+Magnussen (Jan),13,two steps away
+Nakajima (Kazuki),13,two steps away
+Nakano,13,two steps away
+Naspetti,13,two steps away
+Nasr,13,two steps away
+Pablo Montoya,13,two steps away
+Panis,13,two steps away
+Petrov,13,two steps away
+Salo,13,two steps away
+Sato,13,two steps away
+Schumacher (Michael),13,two steps away
+Schumacher (Mick),13,two steps away
+Schumacher (Ralf),13,two steps away
+Senna (Bruno),13,two steps away
+Stevens,13,two steps away
+Sutil,13,two steps away
+Suzuki (Aguri),13,two steps away
+Vergne,13,two steps away
+Verstappen (Jos),13,two steps away
+Webber,13,two steps away
+Wurz,13,two steps away
+Zonta,13,two steps away
+d'Ambrosio,13,two steps away
+de Cesaris,13,two steps away
+de Vries,13,two steps away
+de la Rosa,13,two steps away
+Adams,14,three steps away
+Albers,14,three steps away
+Alboreto,14,three steps away
+Alliot,14,three steps away
+Bellof,14,three steps away
+Berger,14,three steps away
+Bernard,14,three steps away
+Bernoldi,14,three steps away
+Blundell,14,three steps away
+Boullion,14,three steps away
+Bruni,14,three steps away
+Buemi,14,three steps away
+Burti,14,three steps away
+Caffi,14,three steps away
+Comas,14,three steps away
+Danner,14,three steps away
+Diniz,14,three steps away
+Doornbos,14,three steps away
+Enge,14,three steps away
+Fabi,14,three steps away
+Fontana,14,three steps away
+Gachot,14,three steps away
+Gené,14,three steps away
+Grouillard,14,three steps away
+Gugelmin,14,three steps away
+Häkkinen,14,three steps away
+Ide,14,three steps away
+Johansson,14,three steps away
+Järvilehto,14,three steps away
+Kiesa,14,three steps away
+Klien,14,three steps away
+Laffite,14,three steps away
+Lagorce,14,three steps away
+Lammers,14,three steps away
+Larini,14,three steps away
+Lavaggi,14,three steps away
+Mansell,14,three steps away
+Martini,14,three steps away
+Mazepin,14,three steps away
+Mazzacane,14,three steps away
+McNish,14,three steps away
+Merhi,14,three steps away
+Modena,14,three steps away
+Montagny,14,three steps away
+Monteiro,14,three steps away
+Montermini,14,three steps away
+Morbidelli,14,three steps away
+Moreno,14,three steps away
+Nakajima (Satoru),14,three steps away
+Nannini,14,three steps away
+Palmer (Jonathan),14,three steps away
+Pantano,14,three steps away
+Patrese,14,three steps away
+Pic,14,three steps away
+Piquet,14,three steps away
+Pirro,14,three steps away
+Pizzonia,14,three steps away
+Prost,14,three steps away
+Rosset,14,three steps away
+Rossi,14,three steps away
+Schiattarella,14,three steps away
+Senna (Ayrton),14,three steps away
+Speed,14,three steps away
+Streiff,14,three steps away
+Surer,14,three steps away
+Takagi,14,three steps away
+Tarquini,14,three steps away
+Tuero,14,three steps away
+Warwick,14,three steps away
+Wendlinger,14,three steps away
+Wilson,14,three steps away
+Winkelhock (Markus),14,three steps away
+Yamamoto,14,three steps away
+Zanardi,14,three steps away
+da Matta,14,three steps away
+di Grassi,14,three steps away
+van de Poele,14,three steps away
+Acheson,15,four steps away
+Alguersuari,15,four steps away
+Andretti,15,four steps away
+Arnoux,15,four steps away
+Bailey,15,four steps away
+Barilla,15,four steps away
+Belmondo,15,four steps away
+Beretta,15,four steps away
+Brabham,15,four steps away
+Campos,15,four steps away
+Cheever,15,four steps away
+Chiesa,15,four steps away
+Dalmas,15,four steps away
+Donnelly,15,four steps away
+Dumfries,15,four steps away
+Délétraz,15,four steps away
+Fittipaldi (Christian),15,four steps away
+Foitek,15,four steps away
+Forini,15,four steps away
+Friesacher,15,four steps away
+Ghinzani,15,four steps away
+Gounon,15,four steps away
+Hesnault,15,four steps away
+Inoue,15,four steps away
+Larrauri,15,four steps away
+Lauda,15,four steps away
+Noda,15,four steps away
+Pérez-Sala,15,four steps away
+Raphanel,15,four steps away
+Rosberg (Keke),15,four steps away
+Rothengatter,15,four steps away
+Sarrazin,15,four steps away
+Schlesser,15,four steps away
+Schneider,15,four steps away
+Suzuki (Toshio),15,four steps away
+Tambay,15,four steps away
+Watson,15,four steps away
+Winkelhock (Manfred),15,four steps away
+de Angelis,15,four steps away
+van der Garde,15,four steps away
+Barbazza,16,five steps away
+Berg,16,five steps away
+Jones,16,five steps away
+Papis,16,five steps away
+Ratzenberger,16,five steps away
+Baldi,999,disconnected
+Bianchi,999,disconnected
+Chilton,999,disconnected
+Fabre,999,disconnected
+McCarthy,999,disconnected
+Weidler,999,disconnected

@@ -2,7 +2,7 @@ const NODES_CSV_PATH = 'data/nodes.csv';
 const LINKS_CSV_PATH = 'data/links.csv';
 
 const COLOR_OVERRIDES = {
-  Team: {
+  TeamId: {
     '1': '#ff7f0e',
     '2': '#17becf',
     '3': '#1f77b4',
@@ -15,27 +15,15 @@ const COLOR_OVERRIDES = {
     '10': '#9467bd',
     '11': '#7f7f7f',
     '12': '#bcbd22',
-    '13': '#7a9a01'
+    '13': '#7a9a01',
+    '14': '#b7791f',
+    '15': '#0f766e',
+    '16': '#be185d'
   }
 };
 
-const TEAM_LABELS = {
-  '1': 'Current team 1',
-  '2': 'Current team 2',
-  '3': 'Current team 3',
-  '4': 'Current team 4',
-  '5': 'Current team 5',
-  '6': 'Current team 6',
-  '7': 'Current team 7',
-  '8': 'Current team 8',
-  '9': 'Current team 9',
-  '10': 'Current team 10',
-  '11': 'Current team 11',
-  '12': 'Former teammate of a current driver',
-  '13': 'Never teammate with a current driver'
-};
-
 const colorBySelect = document.getElementById('colorBy');
+const layoutModeSelect = document.getElementById('layoutMode');
 const legendEl = document.getElementById('legend');
 const selectionInfoEl = document.getElementById('selectionInfo');
 const fitButton = document.getElementById('fitButton');
@@ -131,11 +119,26 @@ function getEdgeWidth(weighting) {
   return Math.max(1.2, 7 - numeric * 1.1);
 }
 
+function isCurrentDriver(row) {
+  const teamId = Number(row.TeamId);
+  return Number.isFinite(teamId) && teamId >= 1 && teamId <= 11;
+}
+
+function getTeamGroupLevel(row) {
+  const teamId = Number(row.TeamId);
+  if (!Number.isFinite(teamId)) return 99;
+  if (teamId >= 1 && teamId <= 11) return 1;
+  if (teamId === 12) return 2;
+  return 3 + (teamId - 13);
+}
+
 function buildElements(nodes, links) {
   const nodeElements = nodes.map((row) => ({
     data: {
       id: row.Name,
       label: row.Name,
+      isCurrent: isCurrentDriver(row) ? 'true' : 'false',
+      groupLevel: getTeamGroupLevel(row),
       ...row,
       color: getNodeColor(row, colorBySelect.value)
     }
@@ -161,9 +164,22 @@ function populateColourOptions(nodes) {
     const option = document.createElement('option');
     option.value = key;
     option.textContent = key;
-    if (key === 'Team') option.selected = true;
+    if (key === 'TeamId') option.selected = true;
     colorBySelect.appendChild(option);
   });
+}
+
+function getLegendText(field, value) {
+  if (field === 'TeamId') {
+    const sampleNode = nodeRows.find((row) => `${row.TeamId}` === `${value}`);
+    const teamName = sampleNode?.TeamName?.trim();
+
+    if (teamName) return `${value}: ${teamName}`;
+    if (`${value}` === '12') return '12: Former teammate of a current driver';
+    return `${value}: Kevin Bacon distance ${value}`;
+  }
+
+  return value;
 }
 
 function renderLegend(nodes, field) {
@@ -179,12 +195,159 @@ function renderLegend(nodes, field) {
     swatch.style.backgroundColor = getNodeColor({ [field]: value }, field);
 
     const text = document.createElement('span');
-    text.textContent = field === 'Team' ? `${value}: ${TEAM_LABELS[value] ?? value}` : value;
+    text.textContent = getLegendText(field, value);
 
     item.appendChild(swatch);
     item.appendChild(text);
     legendEl.appendChild(item);
   });
+}
+
+function buildStructuredPositions() {
+  const positions = {};
+  const centerX = 0;
+  const centerY = 0;
+
+  const currentRows = nodeRows
+    .filter(isCurrentDriver)
+    .sort((a, b) => {
+      const teamDiff = Number(a.TeamId) - Number(b.TeamId);
+      if (teamDiff !== 0) return teamDiff;
+      return a.Name.localeCompare(b.Name);
+    });
+
+  const currentRadius = 240;
+  currentRows.forEach((row, index) => {
+    const angle = (-Math.PI / 2) + ((2 * Math.PI * index) / Math.max(currentRows.length, 1));
+    positions[row.Name] = {
+      x: centerX + currentRadius * Math.cos(angle),
+      y: centerY + currentRadius * Math.sin(angle)
+    };
+  });
+
+  const ringGroups = new Map();
+  nodeRows.filter((row) => !isCurrentDriver(row)).forEach((row) => {
+    const ring = getTeamGroupLevel(row);
+    if (!ringGroups.has(ring)) ringGroups.set(ring, []);
+    ringGroups.get(ring).push(row);
+  });
+
+  [...ringGroups.keys()].sort((a, b) => a - b).forEach((ring) => {
+    const rows = ringGroups.get(ring).sort((a, b) => a.Name.localeCompare(b.Name));
+    const ringIndex = ring - 1;
+    const radius = 420 + ((ringIndex - 1) * 170);
+
+    rows.forEach((row, index) => {
+      const angle = (-Math.PI / 2) + ((2 * Math.PI * index) / Math.max(rows.length, 1));
+      positions[row.Name] = {
+        x: centerX + radius * Math.cos(angle),
+        y: centerY + radius * Math.sin(angle)
+      };
+    });
+  });
+
+  return positions;
+}
+
+function buildCenterClusterPositions() {
+  const positions = {};
+  const centerX = 0;
+  const centerY = 0;
+
+  const currentRows = nodeRows
+    .filter(isCurrentDriver)
+    .sort((a, b) => Number(a.TeamId) - Number(b.TeamId) || a.Name.localeCompare(b.Name));
+
+  const teamBuckets = new Map();
+  currentRows.forEach((row) => {
+    const key = row.TeamId;
+    if (!teamBuckets.has(key)) teamBuckets.set(key, []);
+    teamBuckets.get(key).push(row);
+  });
+
+  const teamEntries = [...teamBuckets.entries()].sort((a, b) => Number(a[0]) - Number(b[0]));
+  const teamRadius = 165;
+  teamEntries.forEach(([teamId, rows], teamIndex) => {
+    const angle = (-Math.PI / 2) + ((2 * Math.PI * teamIndex) / Math.max(teamEntries.length, 1));
+    const anchorX = centerX + teamRadius * Math.cos(angle);
+    const anchorY = centerY + teamRadius * Math.sin(angle);
+
+    rows.forEach((row, teammateIndex) => {
+      const offsetX = teammateIndex === 0 ? -26 : 26;
+      const offsetY = teammateIndex === 0 ? -12 : 12;
+      positions[row.Name] = { x: anchorX + offsetX, y: anchorY + offsetY };
+    });
+  });
+
+  const nonCurrent = nodeRows.filter((row) => !isCurrentDriver(row));
+  const ringGroups = new Map();
+  nonCurrent.forEach((row) => {
+    const ring = getTeamGroupLevel(row);
+    if (!ringGroups.has(ring)) ringGroups.set(ring, []);
+    ringGroups.get(ring).push(row);
+  });
+
+  [...ringGroups.keys()].sort((a, b) => a - b).forEach((ring) => {
+    const rows = ringGroups.get(ring).sort((a, b) => a.Name.localeCompare(b.Name));
+    const ringIndex = ring - 1;
+    const radius = 360 + ((ringIndex - 1) * 150);
+
+    rows.forEach((row, index) => {
+      const angle = (-Math.PI / 2) + ((2 * Math.PI * index) / Math.max(rows.length, 1));
+      positions[row.Name] = {
+        x: centerX + radius * Math.cos(angle),
+        y: centerY + radius * Math.sin(angle)
+      };
+    });
+  });
+
+  return positions;
+}
+
+function getLayoutConfig(layoutMode) {
+  if (layoutMode === 'structured-rings') {
+    return {
+      name: 'preset',
+      positions: buildStructuredPositions(),
+      fit: true,
+      padding: 60,
+      animate: false
+    };
+  }
+
+  if (layoutMode === 'current-center') {
+    return {
+      name: 'preset',
+      positions: buildCenterClusterPositions(),
+      fit: true,
+      padding: 60,
+      animate: false
+    };
+  }
+
+  return {
+    name: 'cose',
+    animate: false,
+    fit: true,
+    padding: 40,
+    nodeRepulsion: 250000,
+    idealEdgeLength: 90,
+    edgeElasticity: 60,
+    gravity: 30,
+    numIter: 1500
+  };
+}
+
+function formatNodeSelection(data) {
+  const details = [
+    `<strong>${data.label}</strong>`,
+    `Team ID: ${data.TeamId ?? 'n/a'}`
+  ];
+
+  if (data.TeamName) details.push(`Team name: ${data.TeamName}`);
+  if (data.Team) details.push(`Legacy team field: ${data.Team}`);
+
+  return details.join('<br>');
 }
 
 function createGraph() {
@@ -213,11 +376,25 @@ function createGraph() {
         }
       },
       {
+        selector: 'node[isCurrent = "true"]',
+        style: {
+          'width': 28,
+          'height': 28,
+          'border-width': 2
+        }
+      },
+      {
         selector: 'edge',
         style: {
           'width': 'data(width)',
           'line-color': 'rgba(148, 163, 184, 0.45)',
           'curve-style': 'bezier'
+        }
+      },
+      {
+        selector: 'edge[weighting = "1"]',
+        style: {
+          'line-color': 'rgba(30, 41, 59, 0.60)'
         }
       },
       {
@@ -230,17 +407,7 @@ function createGraph() {
         }
       }
     ],
-    layout: {
-      name: 'cose',
-      animate: false,
-      fit: true,
-      padding: 40,
-      nodeRepulsion: 250000,
-      idealEdgeLength: 90,
-      edgeElasticity: 60,
-      gravity: 30,
-      numIter: 1500
-    },
+    layout: getLayoutConfig(layoutModeSelect.value),
     wheelSensitivity: 0.18,
     minZoom: 0.1,
     maxZoom: 6,
@@ -251,10 +418,7 @@ function createGraph() {
 
   cy.on('tap', 'node', (event) => {
     const data = event.target.data();
-    selectionInfoEl.innerHTML = `
-      <strong>${data.label}</strong><br>
-      Team group: ${data.Team ?? 'n/a'}${TEAM_LABELS[data.Team] ? ` (${TEAM_LABELS[data.Team]})` : ''}
-    `;
+    selectionInfoEl.innerHTML = formatNodeSelection(data);
   });
 
   cy.on('tap', 'edge', (event) => {
@@ -288,6 +452,10 @@ function refreshLabels() {
     .update();
 }
 
+function applySelectedLayout() {
+  cy.layout(getLayoutConfig(layoutModeSelect.value)).run();
+}
+
 async function init() {
   try {
     const [nodesCsv, linksCsv] = await Promise.all([
@@ -303,21 +471,10 @@ async function init() {
     renderLegend(nodeRows, colorBySelect.value);
 
     colorBySelect.addEventListener('change', refreshNodeColours);
+    layoutModeSelect.addEventListener('change', applySelectedLayout);
     showLabelsCheckbox.addEventListener('change', refreshLabels);
     fitButton.addEventListener('click', () => cy.fit(undefined, 40));
-    rerunLayoutButton.addEventListener('click', () => {
-      cy.layout({
-        name: 'cose',
-        animate: 'end',
-        fit: true,
-        padding: 40,
-        nodeRepulsion: 250000,
-        idealEdgeLength: 90,
-        edgeElasticity: 60,
-        gravity: 30,
-        numIter: 1500
-      }).run();
-    });
+    rerunLayoutButton.addEventListener('click', applySelectedLayout);
   } catch (error) {
     console.error(error);
     selectionInfoEl.textContent = `Failed to load graph data. ${error.message}`;

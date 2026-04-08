@@ -75,11 +75,12 @@ button {
 
 button {
   cursor: pointer;
-  margin-bottom: 10px;
 }
 
-button:last-child {
-  margin-bottom: 0;
+.button-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 button:hover,

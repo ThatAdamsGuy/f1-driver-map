@@ -16,9 +16,18 @@
       </p>
 
       <div class="panel">
+        <label for="layoutMode">Layout</label>
+        <select id="layoutMode">
+          <option value="force" selected>Force layout</option>
+          <option value="structured-rings">Structured rings</option>
+          <option value="current-center">Current drivers centred</option>
+        </select>
+      </div>
+
+      <div class="panel">
         <label for="colorBy">Colour by</label>
         <select id="colorBy">
-          <option value="Team" selected>Team</option>
+          <option value="TeamId" selected>TeamId</option>
         </select>
       </div>
 
@@ -29,9 +38,9 @@
         </label>
       </div>
 
-      <div class="panel">
+      <div class="panel button-stack">
         <button id="fitButton" type="button">Fit graph</button>
-        <button id="rerunLayoutButton" type="button">Re-run layout</button>
+        <button id="rerunLayoutButton" type="button">Apply layout</button>
       </div>
 
       <div class="panel">
@@ -46,8 +55,9 @@
 
       <div class="panel small-text">
         <h2>CSV format</h2>
-        <p><strong>Nodes:</strong> <code>Name,Team</code></p>
+        <p><strong>Nodes:</strong> <code>Name,TeamId,TeamName</code></p>
         <p><strong>Links:</strong> <code>Source,Target,Weighting</code></p>
+        <p><strong>Layout tips:</strong> <code>Structured rings</code> keeps current drivers on the inner ring. <code>Current drivers centred</code> keeps the current grid clustered in the middle.</p>
       </div>
     </aside>
 
