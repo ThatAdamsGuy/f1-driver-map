@@ -1,28 +1,25 @@
-const NODES_CSV_PATH = 'data/nodes.csv';
-const LINKS_CSV_PATH = 'data/links.csv';
+const NODES_CSV_PATH = 'data/driver_teams.csv';
+const LINKS_CSV_PATH = 'data/driver_edges.csv';
+
+const TEAM_ID_KEY = 'Team Id';
+const TEAM_NAME_KEY = 'Team Name';
+const DRIVER_A_KEY = 'Driver A';
+const DRIVER_B_KEY = 'Driver B';
 
 const COLOR_OVERRIDES = {
-  TeamId: {
-    '1': '#ff7f0e',
-    '2': '#17becf',
-    '3': '#1f77b4',
-    '4': '#d62728',
-    '5': '#3366cc',
-    '6': '#aec7e8',
-    '7': '#2ca02c',
-    '8': '#c7c7c7',
-    '9': '#8c564b',
-    '10': '#9467bd',
-    '11': '#7f7f7f',
-    '12': '#bcbd22',
-    '13': '#7a9a01',
-    '14': '#b7791f',
-    '15': '#0f766e',
-    '16': '#be185d'
-  }
+  '1': '#ef8733',
+  '2': '#75F1D3',
+  '3': '#4570C0',
+  '4': '#D52E37',
+  '5': '#3267D4',
+  '6': '#7091f8',
+  '7': '#4B9774',
+  '8': '#DFE1E2',
+  '9': '#EB4526',
+  '10': '#479FE2',
+  '11': '#AAAADD'
 };
 
-const colorBySelect = document.getElementById('colorBy');
 const layoutModeSelect = document.getElementById('layoutMode');
 const legendEl = document.getElementById('legend');
 const selectionInfoEl = document.getElementById('selectionInfo');
@@ -33,6 +30,7 @@ const showLabelsCheckbox = document.getElementById('showLabels');
 let cy;
 let nodeRows = [];
 let edgeRows = [];
+let adjacency = new Map();
 
 function parseCsv(text) {
   const lines = text.trim().split(/\r?\n/).filter(Boolean);
@@ -90,18 +88,17 @@ function getDistinctValues(rows, key) {
     const numA = Number(a);
     const numB = Number(b);
     if (!Number.isNaN(numA) && !Number.isNaN(numB)) return numA - numB;
-    return a.localeCompare(b);
+    return String(a).localeCompare(String(b));
   });
 }
 
-function getNodeColor(nodeData, field) {
-  const value = `${nodeData[field] ?? ''}`;
-  const overrides = COLOR_OVERRIDES[field] ?? {};
-  if (overrides[value]) return overrides[value];
+function getNodeColor(row) {
+  const value = `${row[TEAM_ID_KEY] ?? ''}`;
+  if (COLOR_OVERRIDES[value]) return COLOR_OVERRIDES[value];
 
   const fallbackPalette = [
-    '#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd',
-    '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf'
+    '#5B8FF9', '#61DDAA', '#65789B', '#F6BD16', '#7262FD',
+    '#78D3F8', '#9661BC', '#F6903D', '#008685', '#F08BB4'
   ];
 
   let hash = 0;
@@ -116,20 +113,34 @@ function getNodeColor(nodeData, field) {
 function getEdgeWidth(weighting) {
   const numeric = Number(weighting);
   if (Number.isNaN(numeric)) return 2;
-  return Math.max(1.2, 7 - numeric * 1.1);
+  return Math.max(1.1, 7 - numeric * 1.05);
 }
 
 function isCurrentDriver(row) {
-  const teamId = Number(row.TeamId);
+  const teamId = Number(row[TEAM_ID_KEY]);
   return Number.isFinite(teamId) && teamId >= 1 && teamId <= 11;
 }
 
 function getTeamGroupLevel(row) {
-  const teamId = Number(row.TeamId);
+  const teamId = Number(row[TEAM_ID_KEY]);
   if (!Number.isFinite(teamId)) return 99;
   if (teamId >= 1 && teamId <= 11) return 1;
   if (teamId === 12) return 2;
-  return 3 + (teamId - 13);
+  return Math.max(3, teamId - 10);
+}
+
+function buildAdjacency(nodes, links) {
+  const map = new Map();
+  nodes.forEach((row) => map.set(row.Name, new Set()));
+  links.forEach((row) => {
+    const a = row[DRIVER_A_KEY];
+    const b = row[DRIVER_B_KEY];
+    if (!map.has(a)) map.set(a, new Set());
+    if (!map.has(b)) map.set(b, new Set());
+    map.get(a).add(b);
+    map.get(b).add(a);
+  });
+  return map;
 }
 
 function buildElements(nodes, links) {
@@ -140,15 +151,15 @@ function buildElements(nodes, links) {
       isCurrent: isCurrentDriver(row) ? 'true' : 'false',
       groupLevel: getTeamGroupLevel(row),
       ...row,
-      color: getNodeColor(row, colorBySelect.value)
+      color: getNodeColor(row)
     }
   }));
 
   const edgeElements = links.map((row, index) => ({
     data: {
-      id: `${row.Source}__${row.Target}__${index}`,
-      source: row.Source,
-      target: row.Target,
+      id: `${row[DRIVER_A_KEY]}__${row[DRIVER_B_KEY]}__${index}`,
+      source: row[DRIVER_A_KEY],
+      target: row[DRIVER_B_KEY],
       weighting: row.Weighting,
       width: getEdgeWidth(row.Weighting)
     }
@@ -157,33 +168,17 @@ function buildElements(nodes, links) {
   return [...nodeElements, ...edgeElements];
 }
 
-function populateColourOptions(nodes) {
-  const keys = Object.keys(nodes[0] ?? {}).filter((key) => !['Name'].includes(key));
-  colorBySelect.innerHTML = '';
-  keys.forEach((key) => {
-    const option = document.createElement('option');
-    option.value = key;
-    option.textContent = key;
-    if (key === 'TeamId') option.selected = true;
-    colorBySelect.appendChild(option);
-  });
+function getLegendText(value) {
+  const sampleNode = nodeRows.find((row) => `${row[TEAM_ID_KEY]}` === `${value}`);
+  const teamName = sampleNode?.[TEAM_NAME_KEY]?.trim();
+
+  if (teamName) return `${value}: ${teamName}`;
+  if (`${value}` === '12') return '12: Former teammate of a current driver';
+  return `${value}: Kevin Bacon distance ${value}`;
 }
 
-function getLegendText(field, value) {
-  if (field === 'TeamId') {
-    const sampleNode = nodeRows.find((row) => `${row.TeamId}` === `${value}`);
-    const teamName = sampleNode?.TeamName?.trim();
-
-    if (teamName) return `${value}: ${teamName}`;
-    if (`${value}` === '12') return '12: Former teammate of a current driver';
-    return `${value}: Kevin Bacon distance ${value}`;
-  }
-
-  return value;
-}
-
-function renderLegend(nodes, field) {
-  const values = getDistinctValues(nodes, field);
+function renderLegend(nodes) {
+  const values = getDistinctValues(nodes, TEAM_ID_KEY);
   legendEl.innerHTML = '';
 
   values.forEach((value) => {
@@ -192,10 +187,10 @@ function renderLegend(nodes, field) {
 
     const swatch = document.createElement('span');
     swatch.className = 'legend-swatch';
-    swatch.style.backgroundColor = getNodeColor({ [field]: value }, field);
+    swatch.style.backgroundColor = getNodeColor({ [TEAM_ID_KEY]: value });
 
     const text = document.createElement('span');
-    text.textContent = getLegendText(field, value);
+    text.textContent = getLegendText(value);
 
     item.appendChild(swatch);
     item.appendChild(text);
@@ -203,47 +198,96 @@ function renderLegend(nodes, field) {
   });
 }
 
-function buildStructuredPositions() {
-  const positions = {};
-  const centerX = 0;
-  const centerY = 0;
-
-  const currentRows = nodeRows
+function getCurrentDriverOrder() {
+  return nodeRows
     .filter(isCurrentDriver)
     .sort((a, b) => {
-      const teamDiff = Number(a.TeamId) - Number(b.TeamId);
+      const teamDiff = Number(a[TEAM_ID_KEY]) - Number(b[TEAM_ID_KEY]);
       if (teamDiff !== 0) return teamDiff;
       return a.Name.localeCompare(b.Name);
     });
+}
 
-  const currentRadius = 240;
-  currentRows.forEach((row, index) => {
-    const angle = (-Math.PI / 2) + ((2 * Math.PI * index) / Math.max(currentRows.length, 1));
-    positions[row.Name] = {
-      x: centerX + currentRadius * Math.cos(angle),
-      y: centerY + currentRadius * Math.sin(angle)
-    };
-  });
+function angleForCurrentTeam(teamId, positionInTeam, teamCount) {
+  const teamIndex = teamId - 1;
+  const baseAngle = (-Math.PI / 2) + ((2 * Math.PI * teamIndex) / Math.max(teamCount, 1));
+  const spread = 0.11;
+  if (positionInTeam === 0) return baseAngle - spread;
+  if (positionInTeam === 1) return baseAngle + spread;
+  return baseAngle + ((positionInTeam - 0.5) * 0.09);
+}
 
+function groupRowsByRing() {
   const ringGroups = new Map();
   nodeRows.filter((row) => !isCurrentDriver(row)).forEach((row) => {
     const ring = getTeamGroupLevel(row);
     if (!ringGroups.has(ring)) ringGroups.set(ring, []);
     ringGroups.get(ring).push(row);
   });
+  return [...ringGroups.entries()].sort((a, b) => a[0] - b[0]);
+}
 
-  [...ringGroups.keys()].sort((a, b) => a - b).forEach((ring) => {
-    const rows = ringGroups.get(ring).sort((a, b) => a.Name.localeCompare(b.Name));
-    const ringIndex = ring - 1;
-    const radius = 420 + ((ringIndex - 1) * 170);
+function averageAngleForRow(row, anglesByNode, fallbackIndex, total) {
+  const neighbours = [...(adjacency.get(row.Name) ?? [])]
+    .filter((name) => anglesByNode.has(name))
+    .map((name) => anglesByNode.get(name));
 
+  if (!neighbours.length) {
+    return (-Math.PI / 2) + ((2 * Math.PI * fallbackIndex) / Math.max(total, 1));
+  }
+
+  const x = neighbours.reduce((sum, angle) => sum + Math.cos(angle), 0);
+  const y = neighbours.reduce((sum, angle) => sum + Math.sin(angle), 0);
+  return Math.atan2(y, x);
+}
+
+function placeRowsOnRing(rows, radius, positions, anglesByNode, jitter = 0) {
+  const total = rows.length;
+  const decorated = rows.map((row, index) => ({
+    row,
+    angle: averageAngleForRow(row, anglesByNode, index, total)
+  }));
+
+  decorated.sort((a, b) => a.angle - b.angle || a.row.Name.localeCompare(b.row.Name));
+
+  decorated.forEach(({ row, angle }, index) => {
+    const finalAngle = angle + (((index % 2 === 0 ? -1 : 1) * jitter));
+    positions[row.Name] = {
+      x: radius * Math.cos(finalAngle),
+      y: radius * Math.sin(finalAngle)
+    };
+    anglesByNode.set(row.Name, finalAngle);
+  });
+}
+
+function buildStructuredPositions() {
+  const positions = {};
+  const anglesByNode = new Map();
+
+  const currentRows = getCurrentDriverOrder();
+  const teamBuckets = new Map();
+  currentRows.forEach((row) => {
+    const key = Number(row[TEAM_ID_KEY]);
+    if (!teamBuckets.has(key)) teamBuckets.set(key, []);
+    teamBuckets.get(key).push(row);
+  });
+
+  const currentRadius = 250;
+  [...teamBuckets.entries()].sort((a, b) => a[0] - b[0]).forEach(([teamId, rows]) => {
+    rows.sort((a, b) => a.Name.localeCompare(b.Name));
     rows.forEach((row, index) => {
-      const angle = (-Math.PI / 2) + ((2 * Math.PI * index) / Math.max(rows.length, 1));
+      const angle = angleForCurrentTeam(teamId, index, teamBuckets.size);
       positions[row.Name] = {
-        x: centerX + radius * Math.cos(angle),
-        y: centerY + radius * Math.sin(angle)
+        x: currentRadius * Math.cos(angle),
+        y: currentRadius * Math.sin(angle)
       };
+      anglesByNode.set(row.Name, angle);
     });
+  });
+
+  groupRowsByRing().forEach(([ring, rows], ringIndex) => {
+    const radius = 440 + (ringIndex * 160);
+    placeRowsOnRing(rows, radius, positions, anglesByNode, 0.02 * (ringIndex + 1));
   });
 
   return positions;
@@ -251,54 +295,38 @@ function buildStructuredPositions() {
 
 function buildCenterClusterPositions() {
   const positions = {};
-  const centerX = 0;
-  const centerY = 0;
-
-  const currentRows = nodeRows
-    .filter(isCurrentDriver)
-    .sort((a, b) => Number(a.TeamId) - Number(b.TeamId) || a.Name.localeCompare(b.Name));
-
+  const anglesByNode = new Map();
+  const currentRows = getCurrentDriverOrder();
   const teamBuckets = new Map();
+
   currentRows.forEach((row) => {
-    const key = row.TeamId;
+    const key = Number(row[TEAM_ID_KEY]);
     if (!teamBuckets.has(key)) teamBuckets.set(key, []);
     teamBuckets.get(key).push(row);
   });
 
-  const teamEntries = [...teamBuckets.entries()].sort((a, b) => Number(a[0]) - Number(b[0]));
-  const teamRadius = 165;
+  const teamEntries = [...teamBuckets.entries()].sort((a, b) => a[0] - b[0]);
+  const teamRadius = 135;
   teamEntries.forEach(([teamId, rows], teamIndex) => {
-    const angle = (-Math.PI / 2) + ((2 * Math.PI * teamIndex) / Math.max(teamEntries.length, 1));
-    const anchorX = centerX + teamRadius * Math.cos(angle);
-    const anchorY = centerY + teamRadius * Math.sin(angle);
+    const teamAngle = (-Math.PI / 2) + ((2 * Math.PI * teamIndex) / Math.max(teamEntries.length, 1));
+    const anchorX = teamRadius * Math.cos(teamAngle);
+    const anchorY = teamRadius * Math.sin(teamAngle);
 
+    rows.sort((a, b) => a.Name.localeCompare(b.Name));
     rows.forEach((row, teammateIndex) => {
-      const offsetX = teammateIndex === 0 ? -26 : 26;
-      const offsetY = teammateIndex === 0 ? -12 : 12;
-      positions[row.Name] = { x: anchorX + offsetX, y: anchorY + offsetY };
-    });
-  });
-
-  const nonCurrent = nodeRows.filter((row) => !isCurrentDriver(row));
-  const ringGroups = new Map();
-  nonCurrent.forEach((row) => {
-    const ring = getTeamGroupLevel(row);
-    if (!ringGroups.has(ring)) ringGroups.set(ring, []);
-    ringGroups.get(ring).push(row);
-  });
-
-  [...ringGroups.keys()].sort((a, b) => a - b).forEach((ring) => {
-    const rows = ringGroups.get(ring).sort((a, b) => a.Name.localeCompare(b.Name));
-    const ringIndex = ring - 1;
-    const radius = 360 + ((ringIndex - 1) * 150);
-
-    rows.forEach((row, index) => {
-      const angle = (-Math.PI / 2) + ((2 * Math.PI * index) / Math.max(rows.length, 1));
+      const localAngle = teamAngle + (teammateIndex === 0 ? -Math.PI / 2 : Math.PI / 2);
+      const offset = rows.length === 1 ? 0 : 20;
       positions[row.Name] = {
-        x: centerX + radius * Math.cos(angle),
-        y: centerY + radius * Math.sin(angle)
+        x: anchorX + offset * Math.cos(localAngle),
+        y: anchorY + offset * Math.sin(localAngle)
       };
+      anglesByNode.set(row.Name, teamAngle + (teammateIndex === 0 ? -0.08 : 0.08));
     });
+  });
+
+  groupRowsByRing().forEach(([ring, rows], ringIndex) => {
+    const radius = 330 + (ringIndex * 150);
+    placeRowsOnRing(rows, radius, positions, anglesByNode, 0.02 * (ringIndex + 1));
   });
 
   return positions;
@@ -330,24 +358,105 @@ function getLayoutConfig(layoutMode) {
     animate: false,
     fit: true,
     padding: 40,
-    nodeRepulsion: 250000,
-    idealEdgeLength: 90,
-    edgeElasticity: 60,
-    gravity: 30,
-    numIter: 1500
+    nodeRepulsion: 300000,
+    idealEdgeLength: 95,
+    edgeElasticity: 70,
+    gravity: 24,
+    gravityRangeCompound: 1.5,
+    numIter: 1800,
+    initialTemp: 220,
+    coolingFactor: 0.96
   };
 }
 
 function formatNodeSelection(data) {
   const details = [
     `<strong>${data.label}</strong>`,
-    `Team ID: ${data.TeamId ?? 'n/a'}`
+    `Team ID: ${data[TEAM_ID_KEY] ?? 'n/a'}`
   ];
 
-  if (data.TeamName) details.push(`Team name: ${data.TeamName}`);
-  if (data.Team) details.push(`Legacy team field: ${data.Team}`);
-
+  if (data[TEAM_NAME_KEY]) details.push(`Team name: ${data[TEAM_NAME_KEY]}`);
   return details.join('<br>');
+}
+
+function shortestPathDistances(startId) {
+  const distances = new Map([[startId, 0]]);
+  const queue = [startId];
+
+  while (queue.length) {
+    const current = queue.shift();
+    const currentDistance = distances.get(current);
+    for (const neighbour of adjacency.get(current) ?? []) {
+      if (!distances.has(neighbour)) {
+        distances.set(neighbour, currentDistance + 1);
+        queue.push(neighbour);
+      }
+    }
+  }
+
+  return distances;
+}
+
+function getOpacityForDistance(distance) {
+  if (distance === undefined) return 0.08;
+  if (distance <= 1) return 1;
+  if (distance === 2) return 0.75;
+  if (distance === 3) return 0.5;
+  return 0.25;
+}
+
+function clearHoverFocus() {
+  if (!cy) return;
+  cy.nodes().forEach((node) => {
+    node.removeClass('hover-dim hover-mid hover-far hover-faint hover-focus');
+  });
+  cy.edges().forEach((edge) => {
+    edge.removeClass('hover-dim hover-mid hover-far hover-faint hover-focus');
+  });
+}
+
+function applyHoverFocus(nodeId) {
+  const distances = shortestPathDistances(nodeId);
+
+  cy.nodes().forEach((node) => {
+    const distance = distances.get(node.id());
+    node.removeClass('hover-dim hover-mid hover-far hover-faint hover-focus');
+
+    if (distance === 0 || distance === 1) {
+      node.addClass('hover-focus');
+    } else if (distance === 2) {
+      node.addClass('hover-mid');
+    } else if (distance === 3) {
+      node.addClass('hover-far');
+    } else if (distance !== undefined) {
+      node.addClass('hover-faint');
+    } else {
+      node.addClass('hover-dim');
+    }
+  });
+
+  cy.edges().forEach((edge) => {
+    const sourceDistance = distances.get(edge.data('source'));
+    const targetDistance = distances.get(edge.data('target'));
+    const edgeDistance = Math.min(
+      sourceDistance ?? Number.POSITIVE_INFINITY,
+      targetDistance ?? Number.POSITIVE_INFINITY
+    );
+
+    edge.removeClass('hover-dim hover-mid hover-far hover-faint hover-focus');
+
+    if (edge.data('source') === nodeId || edge.data('target') === nodeId) {
+      edge.addClass('hover-focus');
+    } else if (edgeDistance === 2) {
+      edge.addClass('hover-mid');
+    } else if (edgeDistance === 3) {
+      edge.addClass('hover-far');
+    } else if (Number.isFinite(edgeDistance)) {
+      edge.addClass('hover-faint');
+    } else {
+      edge.addClass('hover-dim');
+    }
+  });
 }
 
 function createGraph() {
@@ -369,17 +478,21 @@ function createGraph() {
           'text-halign': 'center',
           'text-margin-y': 8,
           'color': '#334155',
+          'text-outline-width': 0,
           'width': 22,
           'height': 22,
           'border-width': 1,
-          'border-color': '#ffffff'
+          'border-color': '#ffffff',
+          'opacity': 1,
+          'transition-property': 'opacity, border-width, line-color, width, height',
+          'transition-duration': '120ms'
         }
       },
       {
         selector: 'node[isCurrent = "true"]',
         style: {
-          'width': 28,
-          'height': 28,
+          'width': 30,
+          'height': 30,
           'border-width': 2
         }
       },
@@ -388,13 +501,46 @@ function createGraph() {
         style: {
           'width': 'data(width)',
           'line-color': 'rgba(148, 163, 184, 0.45)',
-          'curve-style': 'bezier'
+          'curve-style': 'bezier',
+          'opacity': 1,
+          'transition-property': 'opacity, line-color, width',
+          'transition-duration': '120ms'
         }
       },
       {
         selector: 'edge[weighting = "1"]',
         style: {
-          'line-color': 'rgba(30, 41, 59, 0.60)'
+          'line-color': 'rgba(30, 41, 59, 0.62)'
+        }
+      },
+      {
+        selector: '.hover-focus',
+        style: {
+          'opacity': 1
+        }
+      },
+      {
+        selector: '.hover-mid',
+        style: {
+          'opacity': 0.75
+        }
+      },
+      {
+        selector: '.hover-far',
+        style: {
+          'opacity': 0.5
+        }
+      },
+      {
+        selector: '.hover-faint',
+        style: {
+          'opacity': 0.25
+        }
+      },
+      {
+        selector: '.hover-dim',
+        style: {
+          'opacity': 0.08
         }
       },
       {
@@ -421,6 +567,14 @@ function createGraph() {
     selectionInfoEl.innerHTML = formatNodeSelection(data);
   });
 
+  cy.on('mouseover', 'node', (event) => {
+    applyHoverFocus(event.target.id());
+  });
+
+  cy.on('mouseout', 'node', () => {
+    clearHoverFocus();
+  });
+
   cy.on('tap', 'edge', (event) => {
     const data = event.target.data();
     selectionInfoEl.innerHTML = `
@@ -436,15 +590,6 @@ function createGraph() {
   });
 }
 
-function refreshNodeColours() {
-  const field = colorBySelect.value;
-  cy.nodes().forEach((node) => {
-    const data = node.data();
-    node.data('color', getNodeColor(data, field));
-  });
-  renderLegend(nodeRows, field);
-}
-
 function refreshLabels() {
   cy.style()
     .selector('node')
@@ -453,6 +598,7 @@ function refreshLabels() {
 }
 
 function applySelectedLayout() {
+  clearHoverFocus();
   cy.layout(getLayoutConfig(layoutModeSelect.value)).run();
 }
 
@@ -465,12 +611,11 @@ async function init() {
 
     nodeRows = parseCsv(nodesCsv);
     edgeRows = parseCsv(linksCsv);
+    adjacency = buildAdjacency(nodeRows, edgeRows);
 
-    populateColourOptions(nodeRows);
     createGraph();
-    renderLegend(nodeRows, colorBySelect.value);
+    renderLegend(nodeRows);
 
-    colorBySelect.addEventListener('change', refreshNodeColours);
     layoutModeSelect.addEventListener('change', applySelectedLayout);
     showLabelsCheckbox.addEventListener('change', refreshLabels);
     fitButton.addEventListener('click', () => cy.fit(undefined, 40));

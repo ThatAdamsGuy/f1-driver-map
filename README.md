@@ -6,26 +6,31 @@ Static GitHub Pages site for an interactive driver teammate graph.
 
 ### Nodes
 
+File: `data/driver_teams.csv`
+
 ```csv
-Name,TeamId,TeamName
+Name,Team Id,Team Name
 Norris,1,McLaren
 Piastri,1,McLaren
 Hamilton,3,Ferrari
-Alonso,12,Former teammate of a current driver
-Rosberg,13,Kevin Bacon distance 13
+Alonso,5,Aston Martin
+Rosberg,12,Former teammate of a current driver
+Vandoorne,13,Kevin Bacon distance 13
 ```
 
 - `Name`: unique node id and display label
-- `TeamId`: grouping / colour field
+- `Team Id`: grouping and colour field
   - `1-11` = current teams
   - `12` = teammate of a current driver, but not current themselves
   - `13+` = Kevin Bacon distance from the current grid
-- `TeamName`: label used in the legend for `TeamId`
+- `Team Name`: label used in the legend
 
 ### Links
 
+File: `data/driver_edges.csv`
+
 ```csv
-Source,Target,Weighting
+Driver A,Driver B,Weighting
 Norris,Piastri,1
 Hamilton,Leclerc,1
 Alonso,Hamilton,2
@@ -39,9 +44,19 @@ Rosberg,Hamilton,3
 
 ## Layout options
 
-- `Force layout`: organic network view
-- `Structured rings`: current drivers on the inner ring, then outer rings by distance
-- `Current drivers centred`: keeps the current grid grouped in the middle
+- `Default`: organic network view
+- `Structured rings`: current drivers on the inner ring, then outer rings ordered by who they connect to
+- `Current drivers centred`: keeps the current grid grouped in the middle while outer rings follow connected neighbours
+
+## Hover behaviour
+
+Hovering a node fades unrelated parts of the graph by graph distance:
+
+- hovered node and direct neighbours: full opacity
+- distance 2: 75%
+- distance 3: 50%
+- distance 4+: 25%
+- unconnected: heavily faded
 
 ## Publish on GitHub Pages
 
