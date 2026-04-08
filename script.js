@@ -227,36 +227,100 @@ function groupRowsByRing() {
   return [...ringGroups.entries()].sort((a, b) => a[0] - b[0]);
 }
 
-function averageAngleForRow(row, anglesByNode, fallbackIndex, total) {
-  const neighbours = [...(adjacency.get(row.Name) ?? [])]
+function normaliseAngle(angle) {
+  const twoPi = Math.PI * 2;
+  let a = angle % twoPi;
+  if (a < 0) a += twoPi;
+  return a;
+}
+
+function circularAngleDiff(a, b) {
+  const twoPi = Math.PI * 2;
+  let diff = Math.abs(normaliseAngle(a) - normaliseAngle(b));
+  if (diff > Math.PI) diff = twoPi - diff;
+  return diff;
+}
+
+function computeRingRadius(baseRadius, nodeCount, minArcSpacing = 52) {
+  const requiredRadius = (nodeCount * minArcSpacing) / (2 * Math.PI);
+  return Math.max(baseRadius, requiredRadius);
+}
+
+function getPreferredAngleForRow(row, anglesByNode) {
+  const neighbourAngles = [...(adjacency.get(row.Name) ?? [])]
     .filter((name) => anglesByNode.has(name))
     .map((name) => anglesByNode.get(name));
 
-  if (!neighbours.length) {
-    return (-Math.PI / 2) + ((2 * Math.PI * fallbackIndex) / Math.max(total, 1));
+  if (!neighbourAngles.length) {
+    return null;
   }
 
-  const x = neighbours.reduce((sum, angle) => sum + Math.cos(angle), 0);
-  const y = neighbours.reduce((sum, angle) => sum + Math.sin(angle), 0);
-  return Math.atan2(y, x);
+  if (neighbourAngles.length === 1) {
+    return neighbourAngles[0];
+  }
+
+  let sumX = 0;
+  let sumY = 0;
+
+  neighbourAngles.forEach((angle) => {
+    sumX += Math.cos(angle);
+    sumY += Math.sin(angle);
+  });
+
+  if (sumX === 0 && sumY === 0) {
+    return neighbourAngles[0];
+  }
+
+  return normaliseAngle(Math.atan2(sumY, sumX));
 }
 
-function placeRowsOnRing(rows, radius, positions, anglesByNode, jitter = 0) {
-  const total = rows.length;
-  const decorated = rows.map((row, index) => ({
+function placeRowsOnRing(rows, baseRadius, positions, anglesByNode, minArcSpacing = 52) {
+  if (!rows.length) return;
+
+  const radius = computeRingRadius(baseRadius, rows.length, minArcSpacing);
+  const slotCount = rows.length;
+  const slotStep = (Math.PI * 2) / slotCount;
+
+  const decorated = rows.map((row) => ({
     row,
-    angle: averageAngleForRow(row, anglesByNode, index, total)
+    preferredAngle: getPreferredAngleForRow(row, anglesByNode)
   }));
 
-  decorated.sort((a, b) => a.angle - b.angle || a.row.Name.localeCompare(b.row.Name));
+  const anchored = decorated
+    .filter((item) => item.preferredAngle !== null)
+    .sort((a, b) => a.preferredAngle - b.preferredAngle || a.row.Name.localeCompare(b.row.Name));
 
-  decorated.forEach(({ row, angle }, index) => {
-    const finalAngle = angle + (((index % 2 === 0 ? -1 : 1) * jitter));
+  const unanchored = decorated
+    .filter((item) => item.preferredAngle === null)
+    .sort((a, b) => a.row.Name.localeCompare(b.row.Name));
+
+  const ordered = [...anchored, ...unanchored];
+
+  let bestRotation = 0;
+  let bestScore = Number.POSITIVE_INFINITY;
+
+  for (let test = 0; test < slotCount; test++) {
+    const rotation = test * slotStep;
+    let score = 0;
+
+    for (let i = 0; i < anchored.length; i++) {
+      const slotAngle = normaliseAngle(rotation + (i * slotStep));
+      score += circularAngleDiff(slotAngle, anchored[i].preferredAngle);
+    }
+
+    if (score < bestScore) {
+      bestScore = score;
+      bestRotation = rotation;
+    }
+  }
+
+  ordered.forEach(({ row }, index) => {
+    const angle = normaliseAngle(bestRotation + (index * slotStep));
     positions[row.Name] = {
-      x: radius * Math.cos(finalAngle),
-      y: radius * Math.sin(finalAngle)
+      x: radius * Math.cos(angle),
+      y: radius * Math.sin(angle)
     };
-    anglesByNode.set(row.Name, finalAngle);
+    anglesByNode.set(row.Name, angle);
   });
 }
 
@@ -285,9 +349,10 @@ function buildStructuredPositions() {
     });
   });
 
+  const minArcSpacing = 60;
   groupRowsByRing().forEach(([ring, rows], ringIndex) => {
-    const radius = 440 + (ringIndex * 160);
-    placeRowsOnRing(rows, radius, positions, anglesByNode, 0.02 * (ringIndex + 1));
+    const baseRadius = 440 + (ringIndex * 170);
+    placeRowsOnRing(rows, baseRadius, positions, anglesByNode, minArcSpacing);
   });
 
   return positions;
@@ -324,9 +389,10 @@ function buildCenterClusterPositions() {
     });
   });
 
+  const minArcSpacing = 60;
   groupRowsByRing().forEach(([ring, rows], ringIndex) => {
-    const radius = 330 + (ringIndex * 150);
-    placeRowsOnRing(rows, radius, positions, anglesByNode, 0.02 * (ringIndex + 1));
+    const baseRadius = 330 + (ringIndex * 165);
+    placeRowsOnRing(rows, baseRadius, positions, anglesByNode, minArcSpacing);
   });
 
   return positions;
