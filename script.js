@@ -21,6 +21,9 @@ const COLOR_OVERRIDES = {
 };
 
 const layoutModeSelect = document.getElementById('layoutMode');
+const driverPickerPanel = document.getElementById('driverPickerPanel');
+const driverSearchInput = document.getElementById('driverSearch');
+const driverOptionsList = document.getElementById('driverOptions');
 const legendEl = document.getElementById('legend');
 const selectionInfoEl = document.getElementById('selectionInfo');
 const fitButton = document.getElementById('fitButton');
@@ -31,9 +34,11 @@ let cy;
 let nodeRows = [];
 let edgeRows = [];
 let adjacency = new Map();
+let selectedDriverName = '';
 
 function parseCsv(text) {
-  const lines = text.trim().split(/\r?\n/).filter(Boolean);
+  const lines = text.trim().split(/?
+/).filter(Boolean);
   if (!lines.length) return [];
 
   const headers = splitCsvLine(lines[0]);
@@ -198,6 +203,26 @@ function renderLegend(nodes) {
   });
 }
 
+function populateDriverPicker() {
+  const names = nodeRows.map((row) => row.Name).sort((a, b) => a.localeCompare(b));
+  driverOptionsList.innerHTML = '';
+  names.forEach((name) => {
+    const option = document.createElement('option');
+    option.value = name;
+    driverOptionsList.appendChild(option);
+  });
+
+  if (!selectedDriverName || !names.includes(selectedDriverName)) {
+    selectedDriverName = names.find((name) => isCurrentDriver(nodeRows.find((row) => row.Name === name))) || names[0] || '';
+  }
+  driverSearchInput.value = selectedDriverName;
+}
+
+function updateDriverPickerVisibility() {
+  const isDriverMode = layoutModeSelect.value === 'driver-focus';
+  driverPickerPanel.classList.toggle('hidden', !isDriverMode);
+}
+
 function getCurrentDriverOrder() {
   return nodeRows
     .filter(isCurrentDriver)
@@ -251,13 +276,8 @@ function getPreferredAngleForRow(row, anglesByNode) {
     .filter((name) => anglesByNode.has(name))
     .map((name) => anglesByNode.get(name));
 
-  if (!neighbourAngles.length) {
-    return null;
-  }
-
-  if (neighbourAngles.length === 1) {
-    return neighbourAngles[0];
-  }
+  if (!neighbourAngles.length) return null;
+  if (neighbourAngles.length === 1) return neighbourAngles[0];
 
   let sumX = 0;
   let sumY = 0;
@@ -267,14 +287,48 @@ function getPreferredAngleForRow(row, anglesByNode) {
     sumY += Math.sin(angle);
   });
 
-  if (sumX === 0 && sumY === 0) {
-    return neighbourAngles[0];
+  if (sumX === 0 && sumY === 0) return neighbourAngles[0];
+  return normaliseAngle(Math.atan2(sumY, sumX));
+}
+
+function getPreferredAngleForDistanceRing(row, anchorName, anchorDistances, anglesByNode) {
+  const neighbours = [...(adjacency.get(row.Name) ?? [])];
+  const weighted = neighbours
+    .filter((name) => anglesByNode.has(name))
+    .map((name) => ({
+      angle: anglesByNode.get(name),
+      distance: anchorDistances.get(name) ?? 999
+    }))
+    .sort((a, b) => a.distance - b.distance);
+
+  if (!weighted.length) {
+    const fallback = anglesByNode.get(anchorName);
+    return fallback ?? null;
+  }
+
+  if (weighted.length === 1) {
+    return weighted[0].angle;
+  }
+
+  let sumX = 0;
+  let sumY = 0;
+  let totalWeight = 0;
+
+  weighted.forEach(({ angle, distance }) => {
+    const weight = 1 / Math.max(1, distance);
+    sumX += Math.cos(angle) * weight;
+    sumY += Math.sin(angle) * weight;
+    totalWeight += weight;
+  });
+
+  if (totalWeight === 0 || (sumX === 0 && sumY === 0)) {
+    return weighted[0].angle;
   }
 
   return normaliseAngle(Math.atan2(sumY, sumX));
 }
 
-function placeRowsOnRing(rows, baseRadius, positions, anglesByNode, minArcSpacing = 52) {
+function placeRowsOnRing(rows, baseRadius, positions, anglesByNode, minArcSpacing = 52, preferredAngleGetter = null) {
   if (!rows.length) return;
 
   const radius = computeRingRadius(baseRadius, rows.length, minArcSpacing);
@@ -283,7 +337,7 @@ function placeRowsOnRing(rows, baseRadius, positions, anglesByNode, minArcSpacin
 
   const decorated = rows.map((row) => ({
     row,
-    preferredAngle: getPreferredAngleForRow(row, anglesByNode)
+    preferredAngle: preferredAngleGetter ? preferredAngleGetter(row, anglesByNode) : getPreferredAngleForRow(row, anglesByNode)
   }));
 
   const anchored = decorated
@@ -398,6 +452,80 @@ function buildCenterClusterPositions() {
   return positions;
 }
 
+function shortestPathDistances(startId) {
+  const distances = new Map([[startId, 0]]);
+  const queue = [startId];
+
+  while (queue.length) {
+    const current = queue.shift();
+    const currentDistance = distances.get(current);
+    for (const neighbour of adjacency.get(current) ?? []) {
+      if (!distances.has(neighbour)) {
+        distances.set(neighbour, currentDistance + 1);
+        queue.push(neighbour);
+      }
+    }
+  }
+
+  return distances;
+}
+
+function buildDriverFocusPositions(anchorName) {
+  const fallbackAnchor = nodeRows.some((row) => row.Name === anchorName)
+    ? anchorName
+    : (nodeRows.find(isCurrentDriver)?.Name || nodeRows[0]?.Name || '');
+
+  const positions = {};
+  const anglesByNode = new Map();
+
+  if (!fallbackAnchor) return positions;
+
+  positions[fallbackAnchor] = { x: 0, y: 0 };
+  anglesByNode.set(fallbackAnchor, -Math.PI / 2);
+
+  const distances = shortestPathDistances(fallbackAnchor);
+  const grouped = new Map();
+
+  nodeRows
+    .filter((row) => row.Name !== fallbackAnchor)
+    .forEach((row) => {
+      const distance = distances.get(row.Name);
+      const ring = distance === undefined ? 999 : distance;
+      if (!grouped.has(ring)) grouped.set(ring, []);
+      grouped.get(ring).push(row);
+    });
+
+  const knownDistances = [...grouped.keys()].filter((value) => value !== 999).sort((a, b) => a - b);
+  const minArcSpacing = 68;
+
+  knownDistances.forEach((distance) => {
+    const rows = grouped.get(distance) || [];
+    const baseRadius = 180 + ((distance - 1) * 155);
+    placeRowsOnRing(
+      rows,
+      baseRadius,
+      positions,
+      anglesByNode,
+      minArcSpacing,
+      (row, localAnglesByNode) => getPreferredAngleForDistanceRing(row, fallbackAnchor, distances, localAnglesByNode)
+    );
+  });
+
+  const disconnected = grouped.get(999) || [];
+  if (disconnected.length) {
+    placeRowsOnRing(
+      disconnected,
+      180 + (knownDistances.length * 155) + 180,
+      positions,
+      anglesByNode,
+      minArcSpacing,
+      () => 0
+    );
+  }
+
+  return positions;
+}
+
 function getLayoutConfig(layoutMode) {
   if (layoutMode === 'structured-rings') {
     return {
@@ -415,6 +543,16 @@ function getLayoutConfig(layoutMode) {
       positions: buildCenterClusterPositions(),
       fit: true,
       padding: 60,
+      animate: false
+    };
+  }
+
+  if (layoutMode === 'driver-focus') {
+    return {
+      name: 'preset',
+      positions: buildDriverFocusPositions(selectedDriverName),
+      fit: true,
+      padding: 70,
       animate: false
     };
   }
@@ -443,32 +581,6 @@ function formatNodeSelection(data) {
 
   if (data[TEAM_NAME_KEY]) details.push(`Team name: ${data[TEAM_NAME_KEY]}`);
   return details.join('<br>');
-}
-
-function shortestPathDistances(startId) {
-  const distances = new Map([[startId, 0]]);
-  const queue = [startId];
-
-  while (queue.length) {
-    const current = queue.shift();
-    const currentDistance = distances.get(current);
-    for (const neighbour of adjacency.get(current) ?? []) {
-      if (!distances.has(neighbour)) {
-        distances.set(neighbour, currentDistance + 1);
-        queue.push(neighbour);
-      }
-    }
-  }
-
-  return distances;
-}
-
-function getOpacityForDistance(distance) {
-  if (distance === undefined) return 0.08;
-  if (distance <= 1) return 1;
-  if (distance === 2) return 0.75;
-  if (distance === 3) return 0.5;
-  return 0.25;
 }
 
 function clearHoverFocus() {
@@ -665,7 +777,20 @@ function refreshLabels() {
 
 function applySelectedLayout() {
   clearHoverFocus();
+  updateDriverPickerVisibility();
   cy.layout(getLayoutConfig(layoutModeSelect.value)).run();
+}
+
+function handleDriverInputChange() {
+  const value = driverSearchInput.value.trim();
+  if (!value) return;
+  const exact = nodeRows.find((row) => row.Name.toLowerCase() === value.toLowerCase());
+  if (!exact) return;
+  selectedDriverName = exact.Name;
+  driverSearchInput.value = exact.Name;
+  if (layoutModeSelect.value === 'driver-focus') {
+    applySelectedLayout();
+  }
 }
 
 async function init() {
@@ -679,6 +804,8 @@ async function init() {
     edgeRows = parseCsv(linksCsv);
     adjacency = buildAdjacency(nodeRows, edgeRows);
 
+    populateDriverPicker();
+    updateDriverPickerVisibility();
     createGraph();
     renderLegend(nodeRows);
 
@@ -686,6 +813,14 @@ async function init() {
     showLabelsCheckbox.addEventListener('change', refreshLabels);
     fitButton.addEventListener('click', () => cy.fit(undefined, 40));
     rerunLayoutButton.addEventListener('click', applySelectedLayout);
+    driverSearchInput.addEventListener('input', handleDriverInputChange);
+    driverSearchInput.addEventListener('change', handleDriverInputChange);
+    driverSearchInput.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        handleDriverInputChange();
+      }
+    });
   } catch (error) {
     console.error(error);
     selectionInfoEl.textContent = `Failed to load graph data. ${error.message}`;

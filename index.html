@@ -21,7 +21,15 @@
           <option value="default" selected>Default</option>
           <option value="structured-rings">Structured rings</option>
           <option value="current-center">Current drivers centred</option>
+          <option value="driver-focus">Driver</option>
         </select>
+      </div>
+
+      <div class="panel hidden" id="driverPickerPanel">
+        <label for="driverSearch">Driver</label>
+        <input id="driverSearch" list="driverOptions" placeholder="Type to find a driver..." autocomplete="off" />
+        <datalist id="driverOptions"></datalist>
+        <p class="field-help">Select a driver to place them at the centre and arrange everyone else by graph distance.</p>
       </div>
 
       <div class="panel">
@@ -50,7 +58,7 @@
         <h2>CSV format</h2>
         <p><strong>Nodes:</strong> <code>driver_teams.csv</code> with <code>Name,Team Id,Team Name</code></p>
         <p><strong>Links:</strong> <code>driver_edges.csv</code> with <code>Driver A,Driver B,Weighting</code></p>
-        <p><strong>Layout tips:</strong> <code>Structured rings</code> keeps current drivers on the inner ring with outer nodes ordered by who they connect to. <code>Current drivers centred</code> keeps the current grid grouped neatly in the middle.</p>
+        <p><strong>Layout tips:</strong> <code>Structured rings</code> keeps current drivers on the inner ring with outer nodes ordered by who they connect to. <code>Current drivers centred</code> keeps the current grid grouped neatly in the middle. <code>Driver</code> puts one selected driver in the middle and places everyone else into concentric rings by graph distance.</p>
         <p><strong>Hover:</strong> non-connected and distant nodes fade based on graph distance.</p>
       </div>
     </aside>

@@ -56,6 +56,10 @@ html, body {
   margin-bottom: 14px;
 }
 
+.hidden {
+  display: none;
+}
+
 label {
   display: block;
   margin-bottom: 8px;
@@ -63,7 +67,8 @@ label {
 }
 
 select,
-button {
+button,
+input {
   width: 100%;
   padding: 10px 12px;
   border-radius: 10px;
@@ -71,6 +76,10 @@ button {
   background: var(--panel-2);
   color: var(--text);
   font-size: 0.95rem;
+}
+
+input::placeholder {
+  color: #94a3b8;
 }
 
 button {
@@ -84,8 +93,19 @@ button {
 }
 
 button:hover,
-select:hover {
+select:hover,
+input:hover,
+input:focus,
+select:focus {
   filter: brightness(1.08);
+  outline: none;
+}
+
+.field-help {
+  margin: 10px 0 0;
+  color: var(--muted);
+  font-size: 0.85rem;
+  line-height: 1.4;
 }
 
 .graph-area {
