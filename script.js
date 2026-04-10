@@ -37,18 +37,20 @@ let adjacency = new Map();
 let selectedDriverName = '';
 
 function parseCsv(text) {
-  const lines = text.trim().split(/?
-/).filter(Boolean);
-  if (!lines.length) return [];
+  const lines = text.trim().split(/\r?\n/).filter(Boolean);
+  if (lines.length === 0) return [];
 
-  const headers = splitCsvLine(lines[0]);
-  return lines.slice(1).map((line) => {
-    const values = splitCsvLine(line);
-    const row = {};
-    headers.forEach((header, index) => {
-      row[header] = (values[index] ?? '').trim();
+  const headers = lines[0].split(',').map(h => h.trim());
+
+  return lines.slice(1).map(line => {
+    const values = line.split(',');
+    const obj = {};
+
+    headers.forEach((header, i) => {
+      obj[header] = (values[i] || '').trim();
     });
-    return row;
+
+    return obj;
   });
 }
 
